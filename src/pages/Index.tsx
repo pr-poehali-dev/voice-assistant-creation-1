@@ -6,7 +6,7 @@ import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 
 const AVATAR =
-  'https://cdn.poehali.dev/projects/767f9e19-11e6-4a00-ade7-e282e309b2a8/files/c99bd69b-cc2f-4805-b0c3-4ec1ffb81c49.jpg';
+  'https://cdn.poehali.dev/projects/767f9e19-11e6-4a00-ade7-e282e309b2a8/files/0263326f-3dee-4561-bd68-82137f02eb3a.jpg';
 
 type Msg = { role: 'user' | 'larisa'; text: string };
 
