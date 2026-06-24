@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Icon from '@/components/ui/icon';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,20 +24,79 @@ const Index = () => {
   const [alarmOn, setAlarmOn] = useState(false);
   const [alarmTime, setAlarmTime] = useState('07:30');
 
-  const triggerSpeak = () => {
-    setSpeaking(true);
-    setTimeout(() => setSpeaking(false), 2600);
+  const voiceRef = useRef<SpeechSynthesisVoice | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const recognitionRef = useRef<any>(null);
+
+  // подбираем русский женский голос
+  useEffect(() => {
+    const pickVoice = () => {
+      const voices = window.speechSynthesis?.getVoices() || [];
+      const ru = voices.filter((v) => v.lang.startsWith('ru'));
+      voiceRef.current =
+        ru.find((v) => /female|женск|alena|milena|katya|tatyana/i.test(v.name)) || ru[0] || voices[0] || null;
+    };
+    pickVoice();
+    if (window.speechSynthesis) window.speechSynthesis.onvoiceschanged = pickVoice;
+  }, []);
+
+  // озвучивание текста голосом Авроры
+  const speak = (phrase: string) => {
+    const synth = window.speechSynthesis;
+    if (!synth) return;
+    synth.cancel();
+    const u = new SpeechSynthesisUtterance(phrase);
+    u.lang = 'ru-RU';
+    if (voiceRef.current) u.voice = voiceRef.current;
+    u.rate = 0.7 + (voiceSpeed[0] / 100) * 0.8; // 0.7–1.5
+    u.pitch = 0.8 + (voicePitch[0] / 100) * 0.9; // нежность тембра 0.8–1.7
+    u.onstart = () => setSpeaking(true);
+    u.onend = () => setSpeaking(false);
+    synth.speak(u);
+  };
+
+  const reply = (userText: string) => {
+    const base = manipulation
+      ? 'Ты ведь доверяешь мне, правда? Я подскажу так, как будет лучше именно для тебя, милый ♥'
+      : 'Конечно, я здесь для тебя. Сейчас всё расскажу нежно и по делу ♥';
+    setMessages((m) => [...m, { role: 'user', text: userText }, { role: 'aurora', text: base }]);
+    speak(base);
   };
 
   const send = () => {
     if (!text.trim()) return;
-    setMessages((m) => [
-      ...m,
-      { role: 'user', text },
-      { role: 'aurora', text: 'Конечно, я здесь для тебя. Сейчас всё расскажу нежно и по делу ♥' },
-    ]);
+    const t = text;
     setText('');
-    triggerSpeak();
+    reply(t);
+  };
+
+  // распознавание речи с микрофона
+  const toggleMic = () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const win = window as any;
+    const SR = win.SpeechRecognition || win.webkitSpeechRecognition;
+    if (!SR) {
+      alert('Браузер не поддерживает распознавание речи. Попробуй Google Chrome.');
+      return;
+    }
+    if (listening) {
+      recognitionRef.current?.stop();
+      setListening(false);
+      return;
+    }
+    const rec = new SR();
+    rec.lang = 'ru-RU';
+    rec.interimResults = false;
+    rec.onstart = () => setListening(true);
+    rec.onerror = () => setListening(false);
+    rec.onend = () => setListening(false);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    rec.onresult = (e: any) => {
+      const said = e.results[0][0].transcript;
+      reply(said);
+    };
+    recognitionRef.current = rec;
+    rec.start();
   };
 
   return (
@@ -148,10 +207,7 @@ const Index = () => {
                   <Icon name="Send" size={18} />
                 </Button>
                 <Button
-                  onClick={() => {
-                    setListening((v) => !v);
-                    if (!listening) triggerSpeak();
-                  }}
+                  onClick={toggleMic}
                   size="icon"
                   className={`h-11 w-11 shrink-0 rounded-full text-white transition ${
                     listening ? 'bg-rose-500 animate-glow-pulse' : 'bg-accent text-accent-foreground hover:opacity-90'
