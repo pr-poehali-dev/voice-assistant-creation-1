@@ -158,51 +158,81 @@ const Index = () => {
         </header>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-[1.1fr_1fr]">
-          {/* ЦИФРОВАЯ ДЕВУШКА */}
-          <section className="glass relative rounded-[2rem] p-6 animate-fade-in">
-            <div className="relative mx-auto aspect-square w-full max-w-md">
-              {/* орбита */}
-              <div className="absolute inset-0 rounded-full border border-primary/20 animate-spin-slow" />
-              <div
-                className="absolute inset-6 rounded-full border border-accent/20 animate-spin-slow"
-                style={{ animationDirection: 'reverse' }}
-              />
-              {/* свечение под аватаром */}
-              <div
-                className={`absolute inset-8 rounded-full neon-grad blur-2xl ${
-                  speaking ? 'animate-glow-pulse' : 'opacity-40'
-                }`}
-              />
+          {/* ЖИВАЯ ЛАРИСА */}
+          <section className="glass relative rounded-[2rem] p-6 animate-fade-in overflow-hidden">
 
-              <div className="absolute inset-8 overflow-hidden rounded-full ring-2 ring-primary/40 animate-float">
-                <img src={AVATAR} alt="Лариса" className="h-full w-full object-cover" />
-                {/* анимированный рот при разговоре */}
+            {/* фоновое свечение позади */}
+            <div className={`pointer-events-none absolute inset-0 rounded-[2rem] transition-opacity duration-700 ${speaking ? 'opacity-100' : 'opacity-0'}`}
+              style={{ background: 'radial-gradient(ellipse at 50% 60%, hsla(320 90% 62% / 0.18) 0%, transparent 70%)' }} />
+
+            {/* аватар-контейнер */}
+            <div className="relative mx-auto w-full max-w-sm">
+
+              {/* орбитальные кольца */}
+              <div className="absolute inset-0 rounded-full border border-primary/15 animate-spin-slow pointer-events-none" />
+              <div className="absolute inset-4 rounded-full border border-accent/15 animate-spin-slow pointer-events-none"
+                style={{ animationDirection: 'reverse', animationDuration: '18s' }} />
+
+              {/* основной кадр девушки */}
+              <div className={`relative mx-4 overflow-hidden rounded-[1.8rem] ring-2 shadow-2xl transition-all duration-500
+                ${speaking ? 'ring-primary/70 shadow-primary/30' : listening ? 'ring-accent/70 shadow-accent/30 animate-listen-pulse' : 'ring-primary/25 shadow-primary/10'}`}>
+
+                {/* дыхание — обёртка */}
+                <div className="animate-breathe">
+                  {/* движение головы */}
+                  <div className={speaking ? 'animate-head-talk' : 'animate-head-idle'}>
+                    <img
+                      src={AVATAR}
+                      alt="Лариса"
+                      className="w-full object-cover object-top"
+                      style={{ aspectRatio: '3/4', display: 'block' }}
+                    />
+                  </div>
+                </div>
+
+                {/* моргание — тонкая полоска поверх глаз */}
+                <div className="animate-blink pointer-events-none absolute"
+                  style={{ top: '26%', left: 0, right: 0, height: '8%',
+                    background: 'linear-gradient(to bottom, hsl(258 60% 6%), hsl(258 60% 6%))',
+                    transformOrigin: 'top', opacity: 0.97 }} />
+
+                {/* говорит — волна губ */}
                 {speaking && (
-                  <div className="absolute left-1/2 top-[63%] -translate-x-1/2">
-                    <div className="h-3 w-12 origin-center rounded-full bg-rose-400/80 animate-mouth-talk shadow-[0_0_20px] shadow-rose-400/60" />
+                  <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-end gap-[3px]">
+                    {Array.from({ length: 7 }).map((_, i) => (
+                      <span key={i} className="w-1.5 rounded-full bg-rose-300/90 animate-wave-bar"
+                        style={{ height: '18px', animationDelay: `${i * 0.08}s`, animationDuration: '0.5s' }} />
+                    ))}
                   </div>
                 )}
+
+                {/* слушает — неоновый ореол */}
+                {listening && (
+                  <div className="absolute inset-0 rounded-[1.8rem] border-2 border-accent/60 animate-listen-pulse pointer-events-none" />
+                )}
+
+                {/* статус оверлей снизу */}
+                <div className="absolute bottom-0 left-0 right-0 px-4 py-3"
+                  style={{ background: 'linear-gradient(to top, hsla(258 60% 6% / 0.85), transparent)' }}>
+                  <p className="text-center text-sm font-medium text-white/90">
+                    {speaking ? '✦ Говорит…' : listening ? '◉ Слушает тебя…' : '● Онлайн'}
+                  </p>
+                </div>
               </div>
             </div>
 
             {/* звуковая волна */}
-            <div className="mt-6 flex h-12 items-center justify-center gap-1.5">
-              {Array.from({ length: 24 }).map((_, i) => (
-                <span
-                  key={i}
-                  className={`w-1.5 rounded-full neon-grad ${speaking || listening ? 'animate-wave-bar' : ''}`}
+            <div className="mt-5 flex h-10 items-center justify-center gap-1">
+              {Array.from({ length: 28 }).map((_, i) => (
+                <span key={i}
+                  className={`w-1 rounded-full neon-grad transition-all duration-300 ${speaking || listening ? 'animate-wave-bar' : ''}`}
                   style={{
-                    height: speaking || listening ? '100%' : '20%',
-                    animationDelay: `${i * 0.06}s`,
-                    opacity: 0.5 + (i % 5) * 0.1,
-                  }}
-                />
+                    height: speaking || listening ? '100%' : '15%',
+                    animationDelay: `${i * 0.055}s`,
+                    opacity: 0.4 + (i % 6) * 0.1,
+                  }} />
               ))}
             </div>
-
-            <p className="mt-4 text-center text-sm text-muted-foreground">
-              {speaking ? 'Лариса говорит…' : 'Нажми на микрофон или напиши сообщение'}
-            </p>
           </section>
 
           {/* ПРАВАЯ КОЛОНКА */}

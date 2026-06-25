@@ -104,6 +104,38 @@ export default {
 				'spin-slow': {
 					'0%': { transform: 'rotate(0deg)' },
 					'100%': { transform: 'rotate(360deg)' }
+				},
+				'breathe': {
+					'0%, 100%': { transform: 'scale(1)' },
+					'50%': { transform: 'scale(1.025)' }
+				},
+				'blink': {
+					'0%, 90%, 100%': { transform: 'scaleY(1)' },
+					'95%': { transform: 'scaleY(0.05)' }
+				},
+				'head-idle': {
+					'0%':   { transform: 'rotate(0deg) translateX(0px)' },
+					'20%':  { transform: 'rotate(1.2deg) translateX(2px)' },
+					'45%':  { transform: 'rotate(-0.8deg) translateX(-1px)' },
+					'70%':  { transform: 'rotate(0.5deg) translateX(1px)' },
+					'100%': { transform: 'rotate(0deg) translateX(0px)' }
+				},
+				'head-talk': {
+					'0%':   { transform: 'rotate(0deg) translateY(0px)' },
+					'15%':  { transform: 'rotate(-1.5deg) translateY(-2px)' },
+					'30%':  { transform: 'rotate(1deg) translateY(1px)' },
+					'50%':  { transform: 'rotate(-0.8deg) translateY(-1px)' },
+					'70%':  { transform: 'rotate(1.2deg) translateY(2px)' },
+					'85%':  { transform: 'rotate(-0.5deg) translateY(-1px)' },
+					'100%': { transform: 'rotate(0deg) translateY(0px)' }
+				},
+				'listen-pulse': {
+					'0%, 100%': { boxShadow: '0 0 0 0 hsla(190 95% 55% / 0.5)' },
+					'50%': { boxShadow: '0 0 0 18px hsla(190 95% 55% / 0)' }
+				},
+				'shimmer': {
+					'0%': { backgroundPosition: '-200% center' },
+					'100%': { backgroundPosition: '200% center' }
 				}
 			},
 			animation: {
@@ -114,7 +146,13 @@ export default {
 				'glow-pulse': 'glow-pulse 3s ease-in-out infinite',
 				'mouth-talk': 'mouth-talk 0.28s ease-in-out infinite',
 				'wave-bar': 'wave-bar 0.9s ease-in-out infinite',
-				'spin-slow': 'spin-slow 24s linear infinite'
+				'spin-slow': 'spin-slow 24s linear infinite',
+				'breathe': 'breathe 4s ease-in-out infinite',
+				'blink': 'blink 4.5s ease-in-out infinite',
+				'head-idle': 'head-idle 8s ease-in-out infinite',
+				'head-talk': 'head-talk 1.4s ease-in-out infinite',
+				'listen-pulse': 'listen-pulse 1.2s ease-in-out infinite',
+				'shimmer': 'shimmer 2.5s linear infinite'
 			}
 		}
 	},
